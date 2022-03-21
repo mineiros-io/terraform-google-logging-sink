@@ -20,24 +20,11 @@ header {
     text  = "Terraform Version"
   }
 
-  # TODO: remove and enable gh or gcp provider badge
-  badge "tf-aws-provider" {
-    image = "https://img.shields.io/badge/AWS-3-F8991D.svg?logo=terraform"
-    url   = "https://github.com/terraform-providers/terraform-provider-aws/releases"
-    text  = "AWS Provider Version"
+  badge "tf-gcp-provider" {
+    image = "https://img.shields.io/badge/google-4-1A73E8.svg?logo=terraform"
+    url   = "https://github.com/terraform-providers/terraform-provider-google/releases"
+    text  = "Google Provider Version"
   }
-
-  # badge "tf-gh" {
-  #   image = "https://img.shields.io/badge/GH-4-F8991D.svg?logo=terraform"
-  #   url = "https://github.com/terraform-providers/terraform-provider-github/releases"
-  #   text = "Github Provider Version"
-  # }
-
-  # badge "tf-gcp-provider" {
-  #   image = "https://img.shields.io/badge/google-4-1A73E8.svg?logo=terraform"
-  #   url   = "https://github.com/terraform-providers/terraform-provider-google/releases"
-  #   text  = "Google Provider Version"
-  # }
 
   badge "slack" {
     image = "https://img.shields.io/badge/slack-@mineiros--community-f32752.svg?logo=slack"
@@ -50,7 +37,7 @@ section {
   title   = "terraform-google-logging-sink"
   toc     = true
   content = <<-END
-    A [Terraform] module for [Amazon Web Services (AWS)][aws].
+    A [Terraform](https://www.terraform.io) module to create and manage [Google Project Logging Sinks](https://cloud.google.com/logging/docs/reference/v2/rest/v2/projects.sinks).
 
     **_This module supports Terraform version 1
     and is compatible with the Terraform AWS Provider version 3._**
@@ -65,11 +52,7 @@ section {
     content = <<-END
       This module implements the following Terraform resources:
 
-      - `null_resource`
-
-      and supports additional features of the following modules:
-
-      - [mineiros-io/something/google](https://github.com/mineiros-io/terraform-google-something)
+      - `google_logging_project_sink`
     END
   }
 
@@ -81,6 +64,9 @@ section {
       ```hcl
       module "terraform-google-logging-sink" {
         source = "git@github.com:mineiros-io/terraform-google-logging-sink.git?ref=v0.0.1"
+
+        name = "my-pubsub-instance-sink"
+        destination = "pubsub.googleapis.com/projects/my-project/topics/instance-activity"
       }
       ```
     END
@@ -95,53 +81,121 @@ section {
     section {
       title = "Main Resource Configuration"
 
-      # please add main resource variables here
+      variable "name" {
+        required    = true
+        type        = string
+        description = "The name of the logging sink."
+      }
 
-      # TODO: remove examples
-
-      ### Example of a required variable
-      variable "example_required" {
+      variable "destination" {
         required    = true
         type        = string
         description = <<-END
-          The name of the resource
+          The destination of the sink (or, in other words, where logs are written to).
+
+          Can be a Cloud Storage bucket, a PubSub topic, a BigQuery dataset or a Cloud Logging bucket.
+
+          Examples:
+          - `"storage.googleapis.com/[GCS_BUCKET]"`
+          - `"bigquery.googleapis.com/projects/[PROJECT_ID]/datasets/[DATASET]"`
+          - `"pubsub.googleapis.com/projects/[PROJECT_ID]/topics/[TOPIC_ID]"`
+          - `"logging.googleapis.com/projects/[PROJECT_ID]]/locations/global/buckets/[BUCKET_ID]"`
+
+          The writer associated with the sink must have access to write to the above resource.
         END
       }
 
-      ### Example of an optional variable
-      variable "example_name" {
+      variable "filter" {
         type        = string
         description = <<-END
-          The name of the resource
+          The filter to apply when exporting logs. Only log entries that match the filter are exported.
+
+          See [Advanced Log Filters](https://cloud.google.com/logging/docs/view/building-queries) for information on how to write a filter.
         END
-        default     = "optional-resource-name"
       }
 
-      ### Example of an object
-      variable "example_user_object" {
-        type           = object(user)
-        default        = {}
-        readme_example = <<-END
-          user = {
-            name        = "marius"
-            description = "The guy from Berlin."
-          }
+      variable "description" {
+        type        = string
+        description = "A description of this sink. The maximum length of the description is 8000 characters."
+      }
+
+      variable "disabled" {
+        type        = bool
+        description = "If set to True, then this sink is disabled and it does not export any log entries."
+      }
+
+      variable "project" {
+        type        = string
+        description = <<-END
+          The ID of the project to create the sink in.
+
+          If omitted, the project associated with the provider is used.
+        END
+      }
+
+      variable "unique_writer_identity" {
+        type        = bool
+        description = <<-END
+          Whether or not to create a unique identity associated with this sink.
+
+          If `false` (the default), then the `writer_identity` used is `serviceAccount:cloud-logs@system.gserviceaccount.com`.
+
+          If `true`, then a unique service account is created and used for this sink. If you wish to publish logs across projects or utilize `bigquery_options`, you must set `unique_writer_identity` to true.
+        END
+        default     = false
+      }
+
+      variable "bigquery_options" {
+        type        = object(option)
+        description = "Options that affect sinks exporting data to BigQuery."
+
+        attribute "use_partitioned_tables" {
+          required    = true
+          type        = bool
+          description = <<-END
+            Whether to use [BigQuery's partition tables](https://cloud.google.com/bigquery/docs/partitioned-tables).
+
+            By default, Logging creates dated tables based on the log entries' timestamps, e.g. syslog_20170523. With partitioned tables the date suffix is no longer present and [special query syntax](https://cloud.google.com/bigquery/docs/querying-partitioned-tables)  has to be used instead. In both cases, tables are sharded based on UTC timezone.
+          END
+        }
+      }
+
+      variable "exclusions" {
+        type        = list(exclusion)
+        description = <<-END
+          Log entries that match any of the exclusion filters will not be exported.
+
+          If a log entry is matched by both filter and one of `exclusion_filters` it will not be exported. Can be repeated multiple times for multiple exclusions.
         END
 
         attribute "name" {
           required    = true
           type        = string
           description = <<-END
-            The name of the user
-          END
-        }
+            A client-assigned identifier, such as `load-balancer-exclusion`.
 
-        attribute "description" {
-          type        = string
-          default     = ""
-          description = <<-END
-            A description describng the user in more detail
+            Identifiers are limited to 100 characters and can include only letters, digits, underscores, hyphens, and periods. First character has to be alphanumeric.
           END
+
+          attribute "description" {
+            type        = string
+            description = "A description of this exclusion."
+          }
+
+          attribute "filter" {
+            required    = true
+            type        = string
+            description = <<-END
+                An advanced logs filter that matches the log entries to be excluded. By using the sample function, you can exclude less than 100% of the matching log entries.
+
+                See [Advanced Log Filters](https://cloud.google.com/logging/docs/view/advanced_filters) for information on how to write a filter.
+              END
+          }
+
+          attribute "disabled" {
+            type        = bool
+            description = "If set to `true`, then this exclusion is disabled and it does not exclude any log entries."
+          }
         }
       }
     }

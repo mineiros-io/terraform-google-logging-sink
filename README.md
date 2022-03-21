@@ -3,12 +3,12 @@
 [![Build Status](https://github.com/mineiros-io/terraform-google-logging-sink/workflows/Tests/badge.svg)](https://github.com/mineiros-io/terraform-google-logging-sink/actions)
 [![GitHub tag (latest SemVer)](https://img.shields.io/github/v/tag/mineiros-io/terraform-google-logging-sink.svg?label=latest&sort=semver)](https://github.com/mineiros-io/terraform-google-logging-sink/releases)
 [![Terraform Version](https://img.shields.io/badge/Terraform-1.x-623CE4.svg?logo=terraform)](https://github.com/hashicorp/terraform/releases)
-[![AWS Provider Version](https://img.shields.io/badge/AWS-3-F8991D.svg?logo=terraform)](https://github.com/terraform-providers/terraform-provider-aws/releases)
+[![Google Provider Version](https://img.shields.io/badge/google-4-1A73E8.svg?logo=terraform)](https://github.com/terraform-providers/terraform-provider-google/releases)
 [![Join Slack](https://img.shields.io/badge/slack-@mineiros--community-f32752.svg?logo=slack)](https://mineiros.io/slack)
 
 # terraform-google-logging-sink
 
-A [Terraform] module for [Amazon Web Services (AWS)][aws].
+A [Terraform](https://www.terraform.io) module to create and manage [Google Project Logging Sinks](https://cloud.google.com/logging/docs/reference/v2/rest/v2/projects.sinks).
 
 **_This module supports Terraform version 1
 and is compatible with the Terraform AWS Provider version 3._**
@@ -39,11 +39,7 @@ secure, and production-grade cloud infrastructure.
 
 This module implements the following Terraform resources:
 
-- `null_resource`
-
-and supports additional features of the following modules:
-
-- [mineiros-io/something/google](https://github.com/mineiros-io/terraform-google-something)
+- `google_logging_project_sink`
 
 ## Getting Started
 
@@ -52,6 +48,9 @@ Most common usage of the module:
 ```hcl
 module "terraform-google-logging-sink" {
   source = "git@github.com:mineiros-io/terraform-google-logging-sink.git?ref=v0.0.1"
+
+  name = "my-pubsub-instance-sink"
+  destination = "pubsub.googleapis.com/projects/my-project/topics/instance-activity"
 }
 ```
 
@@ -61,40 +60,95 @@ See [variables.tf] and [examples/] for details and use-cases.
 
 ### Main Resource Configuration
 
-- [**`example_required`**](#var-example_required): *(**Required** `string`)*<a name="var-example_required"></a>
+- [**`name`**](#var-name): *(**Required** `string`)*<a name="var-name"></a>
 
-  The name of the resource
+  The name of the logging sink.
 
-- [**`example_name`**](#var-example_name): *(Optional `string`)*<a name="var-example_name"></a>
+- [**`destination`**](#var-destination): *(**Required** `string`)*<a name="var-destination"></a>
 
-  The name of the resource
+  The destination of the sink (or, in other words, where logs are written to).
 
-  Default is `"optional-resource-name"`.
+  Can be a Cloud Storage bucket, a PubSub topic, a BigQuery dataset or a Cloud Logging bucket.
 
-- [**`example_user_object`**](#var-example_user_object): *(Optional `object(user)`)*<a name="var-example_user_object"></a>
+  Examples:
+  - `"storage.googleapis.com/[GCS_BUCKET]"`
+  - `"bigquery.googleapis.com/projects/[PROJECT_ID]/datasets/[DATASET]"`
+  - `"pubsub.googleapis.com/projects/[PROJECT_ID]/topics/[TOPIC_ID]"`
+  - `"logging.googleapis.com/projects/[PROJECT_ID]]/locations/global/buckets/[BUCKET_ID]"`
 
-  Default is `{}`.
+  The writer associated with the sink must have access to write to the above resource.
 
-  Example:
+- [**`filter`**](#var-filter): *(Optional `string`)*<a name="var-filter"></a>
 
-  ```hcl
-  user = {
-    name        = "marius"
-    description = "The guy from Berlin."
-  }
-  ```
+  The filter to apply when exporting logs. Only log entries that match the filter are exported.
 
-  The `user` object accepts the following attributes:
+  See [Advanced Log Filters](https://cloud.google.com/logging/docs/view/building-queries) for information on how to write a filter.
 
-  - [**`name`**](#attr-example_user_object-name): *(**Required** `string`)*<a name="attr-example_user_object-name"></a>
+- [**`description`**](#var-description): *(Optional `string`)*<a name="var-description"></a>
 
-    The name of the user
+  A description of this sink. The maximum length of the description is 8000 characters.
 
-  - [**`description`**](#attr-example_user_object-description): *(Optional `string`)*<a name="attr-example_user_object-description"></a>
+- [**`disabled`**](#var-disabled): *(Optional `bool`)*<a name="var-disabled"></a>
 
-    A description describng the user in more detail
+  If set to True, then this sink is disabled and it does not export any log entries.
 
-    Default is `""`.
+- [**`project`**](#var-project): *(Optional `string`)*<a name="var-project"></a>
+
+  The ID of the project to create the sink in.
+
+  If omitted, the project associated with the provider is used.
+
+- [**`unique_writer_identity`**](#var-unique_writer_identity): *(Optional `bool`)*<a name="var-unique_writer_identity"></a>
+
+  Whether or not to create a unique identity associated with this sink.
+
+  If `false` (the default), then the `writer_identity` used is `serviceAccount:cloud-logs@system.gserviceaccount.com`.
+
+  If `true`, then a unique service account is created and used for this sink. If you wish to publish logs across projects or utilize `bigquery_options`, you must set `unique_writer_identity` to true.
+
+  Default is `false`.
+
+- [**`bigquery_options`**](#var-bigquery_options): *(Optional `object(option)`)*<a name="var-bigquery_options"></a>
+
+  Options that affect sinks exporting data to BigQuery.
+
+  The `option` object accepts the following attributes:
+
+  - [**`use_partitioned_tables`**](#attr-bigquery_options-use_partitioned_tables): *(**Required** `bool`)*<a name="attr-bigquery_options-use_partitioned_tables"></a>
+
+    Whether to use [BigQuery's partition tables](https://cloud.google.com/bigquery/docs/partitioned-tables).
+
+    By default, Logging creates dated tables based on the log entries' timestamps, e.g. syslog_20170523. With partitioned tables the date suffix is no longer present and [special query syntax](https://cloud.google.com/bigquery/docs/querying-partitioned-tables)  has to be used instead. In both cases, tables are sharded based on UTC timezone.
+
+- [**`exclusions`**](#var-exclusions): *(Optional `list(exclusion)`)*<a name="var-exclusions"></a>
+
+  Log entries that match any of the exclusion filters will not be exported.
+
+  If a log entry is matched by both filter and one of `exclusion_filters` it will not be exported. Can be repeated multiple times for multiple exclusions.
+
+  Each `exclusion` object in the list accepts the following attributes:
+
+  - [**`name`**](#attr-exclusions-name): *(**Required** `string`)*<a name="attr-exclusions-name"></a>
+
+    A client-assigned identifier, such as `load-balancer-exclusion`.
+
+    Identifiers are limited to 100 characters and can include only letters, digits, underscores, hyphens, and periods. First character has to be alphanumeric.
+
+    The object accepts the following attributes:
+
+    - [**`description`**](#attr-exclusions-name-description): *(Optional `string`)*<a name="attr-exclusions-name-description"></a>
+
+      A description of this exclusion.
+
+    - [**`filter`**](#attr-exclusions-name-filter): *(**Required** `string`)*<a name="attr-exclusions-name-filter"></a>
+
+      An advanced logs filter that matches the log entries to be excluded. By using the sample function, you can exclude less than 100% of the matching log entries.
+
+      See [Advanced Log Filters](https://cloud.google.com/logging/docs/view/advanced_filters) for information on how to write a filter.
+
+    - [**`disabled`**](#attr-exclusions-name-disabled): *(Optional `bool`)*<a name="attr-exclusions-name-disabled"></a>
+
+      If set to `true`, then this exclusion is disabled and it does not exclude any log entries.
 
 ### Module Configuration
 
