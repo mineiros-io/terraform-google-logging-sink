@@ -63,9 +63,9 @@ Alternatively, you can also run the tests without Docker.
 
 <!-- References -->
 
-[makefile]: https://github.com/mineiros-io/terraform-module-template/blob/main/Makefile
-[testdirectory]: https://github.com/mineiros-io/terraform-module-template/tree/main/test
-[homepage]: https://mineiros.io/?ref=terraform-module-template
+[makefile]: https://github.com/mineiros-io/terraform-google-logging-sink/blob/main/Makefile
+[testdirectory]: https://github.com/mineiros-io/terraform-google-logging-sink/tree/main/test
+[homepage]: https://mineiros.io/?ref=terraform-google-logging-sink
 [terratest]: https://github.com/gruntwork-io/terratest
 [package testing]: https://golang.org/pkg/testing/
 [docker]: https://docs.docker.com/get-started/
