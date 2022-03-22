@@ -145,19 +145,29 @@ section {
         default     = false
       }
 
-      variable "bigquery_options" {
-        type        = object(option)
-        description = "Options that affect sinks exporting data to BigQuery."
+      # TODO: remove if we decide to go with `var.use_partitioned_tables` instead
+      # variable "bigquery_options" {
+      #   type        = object(option)
+      #   description = "Options that affect sinks exporting data to BigQuery."
 
-        attribute "use_partitioned_tables" {
-          required    = true
-          type        = bool
-          description = <<-END
-            Whether to use [BigQuery's partition tables](https://cloud.google.com/bigquery/docs/partitioned-tables).
+      #   attribute "use_partitioned_tables" {
+      #     required    = true
+      #     type        = bool
+      #     description = <<-END
+      #       Whether to use [BigQuery's partition tables](https://cloud.google.com/bigquery/docs/partitioned-tables).
 
-            By default, Logging creates dated tables based on the log entries' timestamps, e.g. syslog_20170523. With partitioned tables the date suffix is no longer present and [special query syntax](https://cloud.google.com/bigquery/docs/querying-partitioned-tables)  has to be used instead. In both cases, tables are sharded based on UTC timezone.
-          END
-        }
+      #       By default, Logging creates dated tables based on the log entries' timestamps, e.g. syslog_20170523. With partitioned tables the date suffix is no longer present and [special query syntax](https://cloud.google.com/bigquery/docs/querying-partitioned-tables)  has to be used instead. In both cases, tables are sharded based on UTC timezone.
+      #     END
+      #   }
+      # }
+      variable "use_partitioned_tables" {
+        type        = bool
+        description = <<-END
+          Whether to use [BigQuery's partition tables](https://cloud.google.com/bigquery/docs/partitioned-tables).
+
+          By default, Logging creates dated tables based on the log entries' timestamps, e.g. syslog_20170523. With partitioned tables the date suffix is no longer present and [special query syntax](https://cloud.google.com/bigquery/docs/querying-partitioned-tables)  has to be used instead. In both cases, tables are sharded based on UTC timezone.
+        END
+        default     = false
       }
 
       variable "exclusions" {
@@ -167,6 +177,7 @@ section {
 
           If a log entry is matched by both filter and one of `exclusion_filters` it will not be exported. Can be repeated multiple times for multiple exclusions.
         END
+        default     = []
 
         attribute "name" {
           required    = true

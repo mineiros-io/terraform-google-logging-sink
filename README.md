@@ -108,23 +108,21 @@ See [variables.tf] and [examples/] for details and use-cases.
 
   Default is `false`.
 
-- [**`bigquery_options`**](#var-bigquery_options): *(Optional `object(option)`)*<a name="var-bigquery_options"></a>
+- [**`use_partitioned_tables`**](#var-use_partitioned_tables): *(Optional `bool`)*<a name="var-use_partitioned_tables"></a>
 
-  Options that affect sinks exporting data to BigQuery.
+  Whether to use [BigQuery's partition tables](https://cloud.google.com/bigquery/docs/partitioned-tables).
 
-  The `option` object accepts the following attributes:
+  By default, Logging creates dated tables based on the log entries' timestamps, e.g. syslog_20170523. With partitioned tables the date suffix is no longer present and [special query syntax](https://cloud.google.com/bigquery/docs/querying-partitioned-tables)  has to be used instead. In both cases, tables are sharded based on UTC timezone.
 
-  - [**`use_partitioned_tables`**](#attr-bigquery_options-use_partitioned_tables): *(**Required** `bool`)*<a name="attr-bigquery_options-use_partitioned_tables"></a>
-
-    Whether to use [BigQuery's partition tables](https://cloud.google.com/bigquery/docs/partitioned-tables).
-
-    By default, Logging creates dated tables based on the log entries' timestamps, e.g. syslog_20170523. With partitioned tables the date suffix is no longer present and [special query syntax](https://cloud.google.com/bigquery/docs/querying-partitioned-tables)  has to be used instead. In both cases, tables are sharded based on UTC timezone.
+  Default is `false`.
 
 - [**`exclusions`**](#var-exclusions): *(Optional `list(exclusion)`)*<a name="var-exclusions"></a>
 
   Log entries that match any of the exclusion filters will not be exported.
 
   If a log entry is matched by both filter and one of `exclusion_filters` it will not be exported. Can be repeated multiple times for multiple exclusions.
+
+  Default is `[]`.
 
   Each `exclusion` object in the list accepts the following attributes:
 
