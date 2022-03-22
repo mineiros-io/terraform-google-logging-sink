@@ -114,7 +114,7 @@ See [variables.tf] and [examples/] for details and use-cases.
 
   By default, Logging creates dated tables based on the log entries' timestamps, e.g. syslog_20170523. With partitioned tables the date suffix is no longer present and [special query syntax](https://cloud.google.com/bigquery/docs/querying-partitioned-tables)  has to be used instead. In both cases, tables are sharded based on UTC timezone.
 
-  Default is `false`.
+  Default is `null`.
 
 - [**`exclusions`**](#var-exclusions): *(Optional `list(exclusion)`)*<a name="var-exclusions"></a>
 
