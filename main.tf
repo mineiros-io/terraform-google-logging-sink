@@ -16,9 +16,12 @@ resource "google_logging_project_sink" "sink" {
   project                = var.project
   unique_writer_identity = var.unique_writer_identity
 
-  # TODO: is this correct?
-  bigquery_options {
-    use_partitioned_tables = var.use_partitioned_tables
+  dynamic "bigquery_options" {
+    for_each = var.use_partitioned_tables != null ? [1] : []
+
+    content {
+      use_partitioned_tables = var.use_partitioned_tables
+    }
   }
 
   dynamic "exclusions" {
