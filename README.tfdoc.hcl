@@ -63,9 +63,9 @@ section {
 
       ```hcl
       module "terraform-google-logging-sink" {
-        source = "git@github.com:mineiros-io/terraform-google-logging-sink.git?ref=v0.0.1"
+        source      = "git@github.com:mineiros-io/terraform-google-logging-sink.git?ref=v0.0.1"
 
-        name = "my-pubsub-instance-sink"
+        name        = "my-pubsub-instance-sink"
         destination = "pubsub.googleapis.com/projects/my-project/topics/instance-activity"
       }
       ```
@@ -129,7 +129,9 @@ section {
         description = <<-END
           The ID of the project to create the sink in.
 
-          If omitted, the project associated with the provider is used.
+          If omitted and either `var.organization` or `var.folder` are present, no project logging sink is created.
+
+          If omitted and both `var.organization` and `var.folder` are omitted, the project associated with the provider is used.
         END
       }
 
@@ -142,7 +144,52 @@ section {
 
           If `true`, then a unique service account is created and used for this sink. If you wish to publish logs across projects or utilize `bigquery_options`, you must set `unique_writer_identity` to true.
         END
-        default     = false
+        default     = null
+      }
+
+      variable "folder" {
+        type        = string
+        description = <<-END
+          The ID of the folder to create the sink in.
+
+          If omitted, no folder logging sink is created.
+
+          If provided along with `var.project`, only the project logging sink is created.
+        END
+        default     = null
+      }
+
+      variable "include_folder_children" {
+        type        = bool
+        description = <<-END
+          Whether or not to include children folders in the sink export.
+
+          If `true`, logs associated with child folders are also exported; otherwise only logs relating to the provided folder are included.
+        END
+        default     = null
+      }
+
+      variable "organization" {
+        type        = string
+        description = <<-END
+          The ID of the organization to create the sink in.
+
+          If omitted, no organization logging sink is created.
+
+          If provided along with `var.project`, only the project logging sink is created.
+
+          If provided along with `var.folder`, the folder logging sink is created instead.
+        END
+        default     = null
+      }
+
+      variable "include_org_children" {
+        type        = bool
+        description = <<-END
+          Whether or not to include children organizations in the sink export.
+
+          If `true`, logs associated with child projects are also exported; otherwise only logs relating to the provided organization are included.
+        END
       }
 
       # TODO: remove if we decide to go with `var.use_partitioned_tables` instead

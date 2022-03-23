@@ -78,7 +78,7 @@ variable "folder" {
 
 variable "include_folder_children" {
   type        = bool
-  description = "(Optional) Whether or not to include children organizations in the sink export. If true, logs associated with child projects are also exported; otherwise only logs relating to the provided organization are included."
+  description = "(Optional) Whether or not to include children folders in the sink export. If true, logs associated with child projects are also exported; otherwise only logs relating to the provided folder are included."
   default     = null
 }
 
