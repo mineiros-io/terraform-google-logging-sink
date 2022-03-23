@@ -48,9 +48,11 @@ variable "disabled" {
   default     = null
 }
 
+# PROJECT
+
 variable "project" {
   type        = string
-  description = "(Optional) The ID of the project to create the sink in. If omitted, the project associated with the provider is used."
+  description = "(Optional) The ID of the project to create the sink in. If omitted and either `var.organization` or `var.folder` are present, no project logging sink is created. If omitted and both `var.organization` and `var.folder` are omitted, the project associated with the provider is used."
   default     = null
 }
 
@@ -63,6 +65,34 @@ variable "unique_writer_identity" {
 
     If `true`, then a unique service account is created and used for this sink. If you wish to publish logs across projects or utilize `bigquery_options`, you must set `unique_writer_identity` to true.
   END
+  default     = null
+}
+
+# ORGANIZATION
+
+variable "organization" {
+  type        = string
+  description = "(Optional) The ID of the organization to create the sink in. If omitted, no organization logging sink is created."
+  default     = null
+}
+
+variable "include_org_children" {
+  type        = bool
+  description = "(Optional) Whether or not to include children organizations in the sink export. If true, logs associated with child projects are also exported; otherwise only logs relating to the provided organization are included."
+  default     = null
+}
+
+# FOLDER
+
+variable "folder" {
+  type        = string
+  description = "(Optional) The ID of the folder to create the sink in. If omitted, no folder logging sink is created."
+  default     = null
+}
+
+variable "include_folder_children" {
+  type        = bool
+  description = "(Optional) Whether or not to include children organizations in the sink export. If true, logs associated with child projects are also exported; otherwise only logs relating to the provided organization are included."
   default     = null
 }
 
