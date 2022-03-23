@@ -4,23 +4,13 @@
 # The purpose is to verify no resources are created when the module is disabled.
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-variable "aws_region" {
-  description = "(Optional) The AWS region in which all resources will be created."
-  type        = string
-  default     = "us-east-1"
-}
-
 terraform {
   required_providers {
-    aws = {
-      source  = "hashicorp/aws"
-      version = "~> 3.0"
+    google = {
+      source  = "hashicorp/google"
+      version = "4.14.0"
     }
   }
-}
-
-provider "aws" {
-  region = var.aws_region
 }
 
 # DO NOT RENAME MODULE NAME
@@ -30,6 +20,8 @@ module "test" {
   module_enabled = false
 
   # add all required arguments
+  name        = "my-pubsub-instance-sink"
+  destination = "pubsub.googleapis.com/projects/my-project/topics/instance-activity"
 
   # add all optional arguments that create additional resources
 }

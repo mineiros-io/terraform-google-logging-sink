@@ -2,6 +2,12 @@
 # OUTPUT CALCULATED VARIABLES (prefer full objects)
 # ----------------------------------------------------------------------------------------------------------------------
 
+output "sink" {
+  description = "All attributes of the created `google_logging_project_sink` resource."
+  value       = try(google_logging_project_sink.sink[0], null)
+}
+
+
 # ----------------------------------------------------------------------------------------------------------------------
 # OUTPUT ALL RESOURCES AS FULL OBJECTS
 # ----------------------------------------------------------------------------------------------------------------------
@@ -14,8 +20,3 @@ output "module_enabled" {
   description = "Whether or not the module is enabled."
   value       = var.module_enabled
 }
-
-# output "module_tags" {
-#   description = "A map of tags that will be applied to all created resources that accept tags."
-#   value       = var.module_tags
-# }
