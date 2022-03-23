@@ -4,8 +4,14 @@
 # We might add more than one line for additional information
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-resource "google_logging_project_sink" "sink" {
-  count = (var.project != null) || (var.folder == null && var.organization == null) ? 1 : 0
+locals {
+  create_project_sink      = (var.project != null) || (var.folder == null && var.organization == null)
+  create_folder_sink       = var.folder != null && !local.create_project_sink
+  create_organization_sink = var.organization != null && !(local.create_folder_sink || local.create_project_sink)
+}
+
+resource "google_logging_project_sink" "project_sink" {
+  count = local.create_project_sink ? 1 : 0
 
   project = var.project
 
@@ -40,10 +46,10 @@ resource "google_logging_project_sink" "sink" {
   depends_on = [var.module_depends_on]
 }
 
-resource "google_logging_organization_sink" "sink" {
-  count = var.organization != null ? 1 : 0
+resource "google_logging_folder_sink" "folder_sink" {
+  count = local.create_folder_sink ? 1 : 0
 
-  org_id = var.organization
+  folder = var.folder
 
   name        = var.name
   destination = var.destination
@@ -52,7 +58,7 @@ resource "google_logging_organization_sink" "sink" {
   description = var.description
   disabled    = var.disabled
 
-  include_children = var.include_org_children
+  include_children = var.include_folder_children
 
   dynamic "bigquery_options" {
     for_each = var.use_partitioned_tables != null ? [1] : []
@@ -76,10 +82,10 @@ resource "google_logging_organization_sink" "sink" {
   depends_on = [var.module_depends_on]
 }
 
-resource "google_logging_folder_sink" "sink" {
-  count = var.folder != null ? 1 : 0
+resource "google_logging_organization_sink" "organization_sink" {
+  count = local.create_organization_sink ? 1 : 0
 
-  folder = var.folder
+  org_id = var.organization
 
   name        = var.name
   destination = var.destination
@@ -88,7 +94,7 @@ resource "google_logging_folder_sink" "sink" {
   description = var.description
   disabled    = var.disabled
 
-  include_children = var.include_folder_children
+  include_children = var.include_org_children
 
   dynamic "bigquery_options" {
     for_each = var.use_partitioned_tables != null ? [1] : []

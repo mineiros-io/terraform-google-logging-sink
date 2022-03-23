@@ -68,29 +68,29 @@ variable "unique_writer_identity" {
   default     = null
 }
 
-# ORGANIZATION
+# FOLDER
 
-variable "organization" {
+variable "folder" {
   type        = string
-  description = "(Optional) The ID of the organization to create the sink in. If omitted, no organization logging sink is created."
+  description = "(Optional) The ID of the folder to create the sink in. If omitted, no folder logging sink is created. If provided along with `var.project`, only the project logging sink is created."
   default     = null
 }
 
-variable "include_org_children" {
+variable "include_folder_children" {
   type        = bool
   description = "(Optional) Whether or not to include children organizations in the sink export. If true, logs associated with child projects are also exported; otherwise only logs relating to the provided organization are included."
   default     = null
 }
 
-# FOLDER
+# ORGANIZATION
 
-variable "folder" {
+variable "organization" {
   type        = string
-  description = "(Optional) The ID of the folder to create the sink in. If omitted, no folder logging sink is created."
+  description = "(Optional) The ID of the organization to create the sink in. If omitted, no organization logging sink is created. If provided along with `var.project`, only the project logging sink is created. If provided along with `var.folder`, the folder logging sink is created instead."
   default     = null
 }
 
-variable "include_folder_children" {
+variable "include_org_children" {
   type        = bool
   description = "(Optional) Whether or not to include children organizations in the sink export. If true, logs associated with child projects are also exported; otherwise only logs relating to the provided organization are included."
   default     = null
