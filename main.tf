@@ -6,7 +6,7 @@
 
 locals {
   create_project_sink      = var.folder == null && var.organization == null
-  create_folder_sink       = var.folder != null && !local.create_project_sink
+  create_folder_sink       = var.folder != null && var.organization == null && var.project == null
   create_organization_sink = var.organization != null && var.folder == null && var.project == null
 }
 
