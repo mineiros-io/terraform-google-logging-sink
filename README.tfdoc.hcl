@@ -147,66 +147,6 @@ section {
         default     = null
       }
 
-      variable "folder" {
-        type        = string
-        description = <<-END
-          The ID of the folder to create the sink in.
-
-          If omitted, no folder logging sink is created.
-
-          If provided along with `var.project`, only the project logging sink is created.
-        END
-        default     = null
-      }
-
-      variable "include_folder_children" {
-        type        = bool
-        description = <<-END
-          Whether or not to include children folders in the sink export.
-
-          If `true`, logs associated with child folders are also exported; otherwise only logs relating to the provided folder are included.
-        END
-        default     = null
-      }
-
-      variable "organization" {
-        type        = string
-        description = <<-END
-          The ID of the organization to create the sink in.
-
-          If omitted, no organization logging sink is created.
-
-          If provided along with `var.project`, only the project logging sink is created.
-
-          If provided along with `var.folder`, the folder logging sink is created instead.
-        END
-        default     = null
-      }
-
-      variable "include_org_children" {
-        type        = bool
-        description = <<-END
-          Whether or not to include children organizations in the sink export.
-
-          If `true`, logs associated with child projects are also exported; otherwise only logs relating to the provided organization are included.
-        END
-      }
-
-      # TODO: remove if we decide to go with `var.use_partitioned_tables` instead
-      # variable "bigquery_options" {
-      #   type        = object(option)
-      #   description = "Options that affect sinks exporting data to BigQuery."
-
-      #   attribute "use_partitioned_tables" {
-      #     required    = true
-      #     type        = bool
-      #     description = <<-END
-      #       Whether to use [BigQuery's partition tables](https://cloud.google.com/bigquery/docs/partitioned-tables).
-
-      #       By default, Logging creates dated tables based on the log entries' timestamps, e.g. syslog_20170523. With partitioned tables the date suffix is no longer present and [special query syntax](https://cloud.google.com/bigquery/docs/querying-partitioned-tables)  has to be used instead. In both cases, tables are sharded based on UTC timezone.
-      #     END
-      #   }
-      # }
       variable "use_partitioned_tables" {
         type        = bool
         description = <<-END
@@ -255,6 +195,44 @@ section {
             description = "If set to `true`, then this exclusion is disabled and it does not exclude any log entries."
           }
         }
+      }
+
+      variable "folder" {
+        type        = string
+        description = <<-END
+          The ID of the folder to create the sink in.
+
+          If omitted, no folder logging sink is created.
+
+          If provided along with `var.project`, only the project logging sink is created.
+        END
+        default     = null
+      }
+
+      variable "organization" {
+        type        = string
+        description = <<-END
+          The ID of the organization to create the sink in.
+
+          If omitted, no organization logging sink is created.
+
+          If provided along with `var.project`, only the project logging sink is created.
+
+          If provided along with `var.folder`, the folder logging sink is created instead.
+        END
+        default     = null
+      }
+
+
+
+      variable "include_children" {
+        type        = bool
+        description = <<-END
+          Whether or not to include child projects in the sink export.
+
+          If `true`, logs associated with child projects are also exported; otherwise only logs relating to the provided folder or organization are included.
+        END
+        default     = null
       }
     }
 

@@ -110,42 +110,6 @@ See [variables.tf] and [examples/] for details and use-cases.
 
   Default is `null`.
 
-- [**`folder`**](#var-folder): *(Optional `string`)*<a name="var-folder"></a>
-
-  The ID of the folder to create the sink in.
-
-  If omitted, no folder logging sink is created.
-
-  If provided along with `var.project`, only the project logging sink is created.
-
-  Default is `null`.
-
-- [**`include_folder_children`**](#var-include_folder_children): *(Optional `bool`)*<a name="var-include_folder_children"></a>
-
-  Whether or not to include children folders in the sink export.
-
-  If `true`, logs associated with child folders are also exported; otherwise only logs relating to the provided folder are included.
-
-  Default is `null`.
-
-- [**`organization`**](#var-organization): *(Optional `string`)*<a name="var-organization"></a>
-
-  The ID of the organization to create the sink in.
-
-  If omitted, no organization logging sink is created.
-
-  If provided along with `var.project`, only the project logging sink is created.
-
-  If provided along with `var.folder`, the folder logging sink is created instead.
-
-  Default is `null`.
-
-- [**`include_org_children`**](#var-include_org_children): *(Optional `bool`)*<a name="var-include_org_children"></a>
-
-  Whether or not to include children organizations in the sink export.
-
-  If `true`, logs associated with child projects are also exported; otherwise only logs relating to the provided organization are included.
-
 - [**`use_partitioned_tables`**](#var-use_partitioned_tables): *(Optional `bool`)*<a name="var-use_partitioned_tables"></a>
 
   Whether to use [BigQuery's partition tables](https://cloud.google.com/bigquery/docs/partitioned-tables).
@@ -185,6 +149,36 @@ See [variables.tf] and [examples/] for details and use-cases.
     - [**`disabled`**](#attr-exclusions-name-disabled): *(Optional `bool`)*<a name="attr-exclusions-name-disabled"></a>
 
       If set to `true`, then this exclusion is disabled and it does not exclude any log entries.
+
+- [**`folder`**](#var-folder): *(Optional `string`)*<a name="var-folder"></a>
+
+  The ID of the folder to create the sink in.
+
+  If omitted, no folder logging sink is created.
+
+  If provided along with `var.project`, only the project logging sink is created.
+
+  Default is `null`.
+
+- [**`organization`**](#var-organization): *(Optional `string`)*<a name="var-organization"></a>
+
+  The ID of the organization to create the sink in.
+
+  If omitted, no organization logging sink is created.
+
+  If provided along with `var.project`, only the project logging sink is created.
+
+  If provided along with `var.folder`, the folder logging sink is created instead.
+
+  Default is `null`.
+
+- [**`include_children`**](#var-include_children): *(Optional `bool`)*<a name="var-include_children"></a>
+
+  Whether or not to include child projects in the sink export.
+
+  If `true`, logs associated with child projects are also exported; otherwise only logs relating to the provided folder or organization are included.
+
+  Default is `null`.
 
 ### Module Configuration
 
