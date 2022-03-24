@@ -68,31 +68,9 @@ variable "unique_writer_identity" {
   default     = null
 }
 
-# FOLDER
-
-variable "folder" {
-  type        = string
-  description = "(Optional) The ID of the folder to create the sink in. If omitted, no folder logging sink is created. If provided along with `var.project`, only the project logging sink is created."
-  default     = null
-}
-
-variable "include_folder_children" {
+variable "include_children" {
   type        = bool
-  description = "(Optional) Whether or not to include children folders in the sink export. If true, logs associated with child projects are also exported; otherwise only logs relating to the provided folder are included."
-  default     = null
-}
-
-# ORGANIZATION
-
-variable "organization" {
-  type        = string
-  description = "(Optional) The ID of the organization to create the sink in. If omitted, no organization logging sink is created. If provided along with `var.project`, only the project logging sink is created. If provided along with `var.folder`, the folder logging sink is created instead."
-  default     = null
-}
-
-variable "include_org_children" {
-  type        = bool
-  description = "(Optional) Whether or not to include children organizations in the sink export. If true, logs associated with child projects are also exported; otherwise only logs relating to the provided organization are included."
+  description = "(Optional) Whether or not to include child projects in the sink export. If true, logs associated with child projects are also exported; otherwise only logs relating to the provided folder or organization are included."
   default     = null
 }
 
@@ -131,6 +109,22 @@ variable "exclusions" {
   default     = []
 }
 
+# FOLDER
+
+variable "folder" {
+  type        = string
+  description = "(Optional) The ID of the folder to create the sink in. Ignored if `var.project` is also set."
+  default     = null
+}
+
+
+# ORGANIZATION
+
+variable "organization" {
+  type        = string
+  description = "(Optional) The ID of the organization to create the sink in. Ignored if `var.project` or `var.folder` are also set."
+  default     = null
+}
 
 # ----------------------------------------------------------------------------------------------------------------------
 # MODULE CONFIGURATION PARAMETERS
