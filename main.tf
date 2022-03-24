@@ -58,7 +58,7 @@ resource "google_logging_folder_sink" "folder_sink" {
   description = var.description
   disabled    = var.disabled
 
-  include_children = var.include_folder_children
+  include_children = var.include_children
 
   dynamic "bigquery_options" {
     for_each = var.use_partitioned_tables != null ? [1] : []
@@ -94,7 +94,7 @@ resource "google_logging_organization_sink" "organization_sink" {
   description = var.description
   disabled    = var.disabled
 
-  include_children = var.include_org_children
+  include_children = var.include_children
 
   dynamic "bigquery_options" {
     for_each = var.use_partitioned_tables != null ? [1] : []
