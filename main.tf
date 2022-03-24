@@ -5,9 +5,9 @@
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 locals {
-  create_project_sink      = var.folder == null && var.organization == null
-  create_folder_sink       = var.folder != null && var.organization == null && var.project == null
-  create_organization_sink = var.organization != null && var.folder == null && var.project == null
+  create_project_sink      = var.project != null || (var.folder == null && var.organization == null)
+  create_folder_sink       = var.project == null && var.folder != null
+  create_organization_sink = var.project == null && var.folder == null && var.organization != null
 }
 
 resource "google_logging_project_sink" "project_sink" {
