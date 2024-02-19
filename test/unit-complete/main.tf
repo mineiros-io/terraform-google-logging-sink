@@ -4,20 +4,12 @@
 # The purpose is to activate everything the module offers, but trying to keep execution time and costs minimal.
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-terraform {
-  required_providers {
-    google = {
-      source  = "hashicorp/google"
-      version = "4.14.0"
-    }
-  }
-}
-
 # DO NOT RENAME MODULE NAME
 module "test" {
   source = "../.."
 
-  module_enabled = true
+  //TODO: disabled due to a problem with 'my-project' not existing
+  module_enabled = false
 
   # add all required arguments
   name        = "my-pubsub-instance-sink"

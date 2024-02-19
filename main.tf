@@ -11,7 +11,7 @@ locals {
 }
 
 resource "google_logging_project_sink" "project_sink" {
-  count = local.create_project_sink ? 1 : 0
+  count = var.module_enabled && local.create_project_sink ? 1 : 0
 
   project = var.project
 
@@ -47,7 +47,7 @@ resource "google_logging_project_sink" "project_sink" {
 }
 
 resource "google_logging_folder_sink" "folder_sink" {
-  count = local.create_folder_sink ? 1 : 0
+  count = var.module_enabled && local.create_folder_sink ? 1 : 0
 
   folder = var.folder
 
@@ -83,7 +83,7 @@ resource "google_logging_folder_sink" "folder_sink" {
 }
 
 resource "google_logging_organization_sink" "organization_sink" {
-  count = local.create_organization_sink ? 1 : 0
+  count = var.module_enabled && local.create_organization_sink ? 1 : 0
 
   org_id = var.organization
 

@@ -4,21 +4,12 @@
 # The purpose is to test all defaults for optional arguments and just provide the required arguments.
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-terraform {
-  required_providers {
-    google = {
-      source  = "hashicorp/google"
-      version = "4.14.0"
-    }
-  }
-}
-
 # DO NOT RENAME MODULE NAME
 module "test" {
   source = "../.."
 
-  name        = "my-pubsub-instance-sink"
-  destination = "pubsub.googleapis.com/projects/my-project/topics/instance-activity"
+  name        = "my-pubsub-instance-sink-minimal"
+  destination = "pubsub.googleapis.com/projects/${var.gcp_project}/topics/instance-activity"
 }
 
 # outputs generate non-idempotent terraform plans so we disable them for now unless we need them.

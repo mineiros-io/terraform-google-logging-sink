@@ -64,6 +64,8 @@ endif
 # the relevant environment variables (service-account key file).
 ifdef GOOGLE_CREDENTIALS
 	DOCKER_GCP_FLAGS += -e GOOGLE_CREDENTIALS
+	DOCKER_GCP_FLAGS += -e TEST_GCP_PROJECT
+	DOCKER_GCP_FLAGS += -e TEST_GCP_ORG_DOMAIN
 endif
 
 # If GITHUB_OWNER is defined, we are likely running inside a GitHub provider
