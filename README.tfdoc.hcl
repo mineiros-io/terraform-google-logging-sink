@@ -40,7 +40,7 @@ section {
     A [Terraform](https://www.terraform.io) module to create and manage [Google Project Logging Sinks](https://cloud.google.com/logging/docs/reference/v2/rest/v2/projects.sinks).
 
     **_This module supports Terraform version 1
-    and is compatible with the Terraform AWS Provider version 3._**
+    and is compatible with the Terraform AWS Provider version 4.1._** and 5._**
 
     This module is part of our Infrastructure as Code (IaC) framework
     that enables our users and customers to easily deploy and manage reusable,
@@ -253,63 +253,6 @@ section {
         END
       }
 
-      # TODO: remove if not needed
-      variable "module_tags" {
-        type           = map(string)
-        default        = {}
-        description    = <<-END
-          A map of tags that will be applied to all created resources that accept tags.
-          Tags defined with `module_tags` can be overwritten by resource-specific tags.
-        END
-        readme_example = <<-END
-          module_tags = {
-            environment = "staging"
-            team        = "platform"
-          }
-        END
-      }
-
-      # TODO: remove if not needed
-      variable "module_timeouts" {
-        type           = map(timeout)
-        description    = <<-END
-          A map of timeout objects that is keyed by Terraform resource name
-          defining timeouts for `create`, `update` and `delete` Terraform operations.
-
-          Supported resources are: `null_resource`, ...
-        END
-        readme_example = <<-END
-          module_timeouts = {
-            null_resource = {
-              create = "4m"
-              update = "4m"
-              delete = "4m"
-            }
-          }
-        END
-
-        attribute "create" {
-          type        = string
-          description = <<-END
-            Timeout for create operations.
-          END
-        }
-
-        attribute "update" {
-          type        = string
-          description = <<-END
-            Timeout for update operations.
-          END
-        }
-
-        attribute "delete" {
-          type        = string
-          description = <<-END
-            Timeout for delete operations.
-          END
-        }
-      }
-
       variable "module_depends_on" {
         type           = list(dependency)
         description    = <<-END
@@ -332,18 +275,32 @@ section {
       The following attributes are exported in the outputs of the module:
     END
 
+    output "project_sink" {
+      type        = list(object)
+      description = <<-END
+      All attributes of the created `google_logging_project_sink` resource.
+    END
+    }
+
+    output "folder_sink" {
+      type        = list(object)
+      description = <<-END
+      All attributes of the created `google_logging_folder_sink` resource.
+    END
+    }
+
+    output "organization_sink" {
+      type        = list(object)
+      description = <<-END
+      All attributes of the created `google_logging_organization_sink` resource.
+    END
+    }
+
     output "module_enabled" {
       type        = bool
       description = <<-END
           Whether this module is enabled.
         END
-    }
-
-    output "module_tags" {
-      type        = map(string)
-      description = <<-END
-        The map of tags that are being applied to all created resources that accept tags.
-      END
     }
   }
 

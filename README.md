@@ -11,7 +11,7 @@
 A [Terraform](https://www.terraform.io) module to create and manage [Google Project Logging Sinks](https://cloud.google.com/logging/docs/reference/v2/rest/v2/projects.sinks).
 
 **_This module supports Terraform version 1
-and is compatible with the Terraform AWS Provider version 3._**
+and is compatible with the Terraform AWS Provider version 4.1._** and 5._**
 
 This module is part of our Infrastructure as Code (IaC) framework
 that enables our users and customers to easily deploy and manage reusable,
@@ -188,55 +188,6 @@ See [variables.tf] and [examples/] for details and use-cases.
 
   Default is `true`.
 
-- [**`module_tags`**](#var-module_tags): *(Optional `map(string)`)*<a name="var-module_tags"></a>
-
-  A map of tags that will be applied to all created resources that accept tags.
-  Tags defined with `module_tags` can be overwritten by resource-specific tags.
-
-  Default is `{}`.
-
-  Example:
-
-  ```hcl
-  module_tags = {
-    environment = "staging"
-    team        = "platform"
-  }
-  ```
-
-- [**`module_timeouts`**](#var-module_timeouts): *(Optional `map(timeout)`)*<a name="var-module_timeouts"></a>
-
-  A map of timeout objects that is keyed by Terraform resource name
-  defining timeouts for `create`, `update` and `delete` Terraform operations.
-
-  Supported resources are: `null_resource`, ...
-
-  Example:
-
-  ```hcl
-  module_timeouts = {
-    null_resource = {
-      create = "4m"
-      update = "4m"
-      delete = "4m"
-    }
-  }
-  ```
-
-  Each `timeout` object in the map accepts the following attributes:
-
-  - [**`create`**](#attr-module_timeouts-create): *(Optional `string`)*<a name="attr-module_timeouts-create"></a>
-
-    Timeout for create operations.
-
-  - [**`update`**](#attr-module_timeouts-update): *(Optional `string`)*<a name="attr-module_timeouts-update"></a>
-
-    Timeout for update operations.
-
-  - [**`delete`**](#attr-module_timeouts-delete): *(Optional `string`)*<a name="attr-module_timeouts-delete"></a>
-
-    Timeout for delete operations.
-
 - [**`module_depends_on`**](#var-module_depends_on): *(Optional `list(dependency)`)*<a name="var-module_depends_on"></a>
 
   A list of dependencies.
@@ -256,13 +207,21 @@ See [variables.tf] and [examples/] for details and use-cases.
 
 The following attributes are exported in the outputs of the module:
 
+- [**`project_sink`**](#output-project_sink): *(`list(object)`)*<a name="output-project_sink"></a>
+
+  All attributes of the created `google_logging_project_sink` resource.
+
+- [**`folder_sink`**](#output-folder_sink): *(`list(object)`)*<a name="output-folder_sink"></a>
+
+  All attributes of the created `google_logging_folder_sink` resource.
+
+- [**`organization_sink`**](#output-organization_sink): *(`list(object)`)*<a name="output-organization_sink"></a>
+
+  All attributes of the created `google_logging_organization_sink` resource.
+
 - [**`module_enabled`**](#output-module_enabled): *(`bool`)*<a name="output-module_enabled"></a>
 
   Whether this module is enabled.
-
-- [**`module_tags`**](#output-module_tags): *(`map(string)`)*<a name="output-module_tags"></a>
-
-  The map of tags that are being applied to all created resources that accept tags.
 
 ## External Documentation
 

@@ -1,6 +1,7 @@
 package test
 
 import (
+	"os"
 	"testing"
 
 	"github.com/gruntwork-io/terratest/modules/terraform"
@@ -9,12 +10,23 @@ import (
 func TestUnitComplete(t *testing.T) {
 	t.Parallel()
 
+	// only if the environment variables are set to non-empty they will be passed to terraform
+	vars := map[string]interface{}{
+		"gcp_project":         os.Getenv("TEST_GCP_PROJECT"),
+		"gcp_org_domain":      os.Getenv("TEST_GCP_ORG_DOMAIN"),
+		"gcp_billing_account": os.Getenv("TEST_GCP_BILLING_ACCOUNT"),
+	}
+
+	for key, value := range vars {
+		if value == "" {
+			delete(vars, key)
+		}
+	}
+
 	terraformOptions := &terraform.Options{
 		TerraformDir: "unit-complete",
-		Vars: map[string]interface{}{
-			"aws_region": "us-east-1",
-		},
-		Upgrade: true,
+		Vars:         vars,
+		Upgrade:      true,
 	}
 
 	defer terraform.Destroy(t, terraformOptions)

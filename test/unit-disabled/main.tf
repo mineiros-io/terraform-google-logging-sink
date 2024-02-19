@@ -4,15 +4,6 @@
 # The purpose is to verify no resources are created when the module is disabled.
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-terraform {
-  required_providers {
-    google = {
-      source  = "hashicorp/google"
-      version = "4.14.0"
-    }
-  }
-}
-
 # DO NOT RENAME MODULE NAME
 module "test" {
   source = "../.."
@@ -20,9 +11,8 @@ module "test" {
   module_enabled = false
 
   # add all required arguments
-  name        = "my-pubsub-instance-sink"
-  destination = "pubsub.googleapis.com/projects/my-project/topics/instance-activity"
-
+  name        = "my-pubsub-instance-sink-disabled"
+  destination = "pubsub.googleapis.com/projects/${var.gcp_project}/topics/instance-activity"
   # add all optional arguments that create additional resources
 }
 
